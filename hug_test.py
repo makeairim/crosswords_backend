@@ -40,6 +40,10 @@ def post(body=None):
     resp = 'OK'
     return resp
 
+# todo JESLI bedzie wiecej kontrolerow to:
+# todo modul dla kontrolerow i wlaczamy jeden plik z lini polecen ( hug -f [plik]) w ktorym siedzi reszta kontrolerow czyli maly research jak to zrobic
+
+
 # todo obsluga bledow, do celow testowych i dev bedzie najlepiej zrobic prosty serwis albo podpiac biblitoeke do zapisywania logow,usprawni to dalsza prace i nie bedzie sie szukac bledow nie wiadomo w ktorej czesci
 # todo c.d. mozna rozdzielic zapisywanie zwyklych logow, wszystkich i bledow
 if __name__ == '__main__':
