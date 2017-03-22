@@ -1,4 +1,4 @@
-# studio_1_backend  
+# crosswords_backend  
 REST API in python, receives and sends images. Images before sending are processed by algorithm.  
 Algoirthm and image processing are recognizing sudoku pattern and solving it.  
 Default project should be opened in *IntelliJ*.    
