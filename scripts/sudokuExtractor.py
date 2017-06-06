@@ -26,7 +26,7 @@ class Extractor(object):
     def loadImage(self, path):
         color_img = cv2.imread(path)
         if color_img is None:
-            raise IOError('Image not loaded')
+            raise IOError('Image not loaded '+path)
         print 'Image loaded.'
         return color_img
 

@@ -32,9 +32,12 @@ def snap_sudoku(image_path):
     grid = ''.join(cell for cell in get_cells(image_path))
     s = SudokuStr(grid)
     try:
-        print('\nSolving...\n\n{}'.format(s.solve()))
+        result = s.solve()
+        print('\nSolving...\n\n{}'.format(result))
+        return format(result)
     except ValueError:
         print('No solution found.  Please rescan the puzzle.')
+        return "No solution found"
 
 
 if __name__ == '__main__':
