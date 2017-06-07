@@ -183,7 +183,6 @@ scripts/validator.py
 
 
 ###android
-*.iml
 .gradle
 /local.properties
 /.idea/workspace.xml
@@ -312,7 +311,7 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
-
+.jar
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
 ### JetBrains template
