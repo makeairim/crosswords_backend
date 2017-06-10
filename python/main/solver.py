@@ -87,4 +87,4 @@ def get_matrix(filepath):
     return result
 
 
-get_matrix('sudoku.jpg')
+# get_matrix('sudoku.jpg')
