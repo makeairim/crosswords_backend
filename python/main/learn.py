@@ -4,32 +4,32 @@ import os
 import cv2
 import pickle
 
+def get_image(path):
+    img = cv2.imread(path)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY )
+    img = cv2.resize(img, (36,36))
+    return img
 
-
-TEST_PATH = "dataset\\test"
-list_folder = os.listdir(TEST_PATH)
+print("Learning...")
+path_test_set = "dataset\\test"
 testset = []
 test_label = []
-for folder in list_folder:
-    flist = os.listdir(os.path.join(TEST_PATH, folder))
+for folder in os.listdir(path_test_set):
+    flist = os.listdir(os.path.join(path_test_set, folder))
     for f in flist:
-        im = cv2.imread(os.path.join(TEST_PATH, folder, f))
-        im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY )
-        im = cv2.resize(im, (36,36))
-        testset.append(im)
+        img = get_image(os.path.join(path_test_set, folder, f))
+        testset.append(img)
         test_label.append(int(folder))
 testset = np.reshape(testset, (len(testset), -1))
+print("...")
 
-TRAIN_PATH = "dataset\\train"
-list_folder = os.listdir(TRAIN_PATH)
+path_train_set = "dataset\\train"
 trainset = []
-for folder in list_folder:
-    flist = os.listdir(os.path.join(TRAIN_PATH, folder))
+for folder in os.listdir(path_train_set):
+    flist = os.listdir(os.path.join(path_train_set, folder))
     for f in flist:
-        im = cv2.imread(os.path.join(TRAIN_PATH, folder, f))
-        im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY )
-        im = cv2.resize(im, (36,36))
-        trainset.append(im)
+        img = get_image(os.path.join(path_train_set, folder, f))
+        trainset.append(img)
 trainset = np.reshape(trainset, (5000, -1))
 
 train_label = []
@@ -37,6 +37,7 @@ for i in range(0,10):
     temp = 500*[i]
     train_label.extend(temp)
 
+print("...")
 
 clf = LinearSVC()
 clf.fit(trainset, train_label)
