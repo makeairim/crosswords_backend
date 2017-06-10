@@ -7,6 +7,7 @@ from random import randint
 import urllib.request, urllib.parse, urllib.error
 import sys
 import base64
+import learn
 
 
 @get('/hello/<name>')
