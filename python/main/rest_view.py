@@ -1,13 +1,10 @@
-from bottle import request, response,static_file,post, get,route,run,template
-import os
-import tempfile
-import json
-import ntpath
-from random import randint
-import urllib.request, urllib.parse, urllib.error
-import sys
 import base64
-import learn
+import json
+from bottle import request, response, static_file, post, get, route, run, template
+from random import randint
+
+from backtrack import solveSudoku, printGrid
+from solver import get_matrix
 
 
 @get('/hello/<name>')
@@ -53,35 +50,37 @@ def send_image(filename):
 
 @get('/image/<filename>')
 def do_download(filename):
-	dir = get_save_path_for_category()
-	ext='.jpg'
-	path = dir + "\\" + filename + ext
-	f=open(path,'rb');
-	content=f.read();
-	return content;
-	
-	
+    dir = get_save_path_for_category()
+    ext = '.jpg'
+    path = dir + "\\" + filename + ext
+    f = open(path, 'rb');
+    content = f.read();
+    return content;
+
 
 @post('/upload2')
 def do_upload2():
-	dir = get_save_path_for_category()
-	print ( dir ) 
-	filename = str ( randint ( 1 ,  10000 ) )
-	ext='.jpg'
-        # upload.filename = filename + ext
+    dir = get_save_path_for_category()
+    print (dir)
+    filename = str(randint(1, 10000))
+    ext = '.jpg'
+    # upload.filename = filename + ext
     # # print(upload.filename)
     # # upload.save(dir, True)  # appends upload.filename automatically
-	path = dir + "\\" + filename + ext
-	print(path)
-	f = open(path, 'wb')
-	f.write(base64.standard_b64decode(request.body.read()))
-	f.close()
-	result=path
-	if request.headers['Content-Type'] == 'application/json':
-		return json.dumps({'result': 'octet stream1'})
-	else:
-		response.headers['Content-Type'] = 'Content-Type: application/json; charset=UTF-8'
-		return json.dumps({'result':filename})
+    path = dir + "\\" + filename + ext
+    print(path)
+    f = open(path, 'wb')
+    f.write(base64.standard_b64decode(request.body.read()))
+    f.close()
+    matrix = get_matrix(path)
+    (res, grid) = solveSudoku(matrix)
+    if (res == True):
+        printGrid(grid)
+    if request.headers['Content-Type'] == 'application/json':
+        return json.dumps({'result': 'octet stream1'})
+    else:
+        response.headers['Content-Type'] = 'Content-Type: application/json; charset=UTF-8'
+        return json.dumps({'result': filename})
 
 
 @post('/upload')
@@ -95,12 +94,12 @@ def do_upload():
     # else:
     # print(request.body)
     body = request.body.read()
-    jsonObj=json.loads(body);
+    jsonObj = json.loads(body);
     # return json.dumps({'result': jsonObj['content']})
     # save_path = get_save_path_for_category()
     # upload.filename = 'tmp1'+ext
-    #try:
-        # tempFile = tempfile.NamedTemporaryFile(suffix=ext)
+    # try:
+    # tempFile = tempfile.NamedTemporaryFile(suffix=ext)
     # filename = 'tmp1'+ext
     # dir= os.path.dirname(tempFile.name)
     # head,tail = ntpath.split(tempFile.name)
@@ -111,8 +110,8 @@ def do_upload():
     dir = get_save_path_for_category()
     print(dir)
     filename = str(randint(1, 10000))
-    ext='.jpg'
-        # upload.filename = filename + ext
+    ext = '.jpg'
+    # upload.filename = filename + ext
     # # print(upload.filename)
     # # upload.save(dir, True)  # appends upload.filename automatically
     path = dir + "\\" + filename + ext
@@ -120,13 +119,13 @@ def do_upload():
     f = open(path, 'wb')
     f.write(jsonObj['content'])
     f.close()
-    result=path
-        # result = snap_sudoku(path)
+    result = path
+    # result = snap_sudoku(path)
     #    result='ss'
     # response.headers['Content-Type'] = 'application/json'
-    #except IOError as e:
-     #   print("I/O error({0}): {1}".format(e.errno, e.strerror))
-      #  return json.dumps({'result': 'Cannot solve sudoku'})
+    # except IOError as e:
+    #   print("I/O error({0}): {1}".format(e.errno, e.strerror))
+    #  return json.dumps({'result': 'Cannot solve sudoku'})
     # else:
     # os.remove(path)
     return json.dumps({'result': result})

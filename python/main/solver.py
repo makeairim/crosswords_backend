@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import pickle
-
+import sys
+import learn
 
 def clear_digit_borders(digit, size):
     for y in range(0, size):
@@ -88,3 +89,9 @@ def get_matrix(filepath):
 
 
 # get_matrix('sudoku.jpg')
+if __name__ == '__main__':
+    try:
+        get_matrix(sys.argv[1])
+    except:
+        raise
+
