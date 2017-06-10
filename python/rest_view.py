@@ -3,14 +3,18 @@ import os
 import tempfile
 import json
 import ntpath
-from sudoku import snap_sudoku
 from random import randint
+import urllib.request, urllib.parse, urllib.error
+import sys
+import base64
+
 
 @get('/hello/<name>')
 def index(name):
     return template('<b>Hello {{name}}</b>!', name=name)
 
-debug=True
+
+debug = True
 
 _names = set()
 _names.add('SomeName')
@@ -46,38 +50,86 @@ def send_image(filename):
 #
 #     return 'OK'
 
+@get('/image/<filename>')
+def do_download(filename):
+	dir = get_save_path_for_category()
+	ext='.jpg'
+	path = dir + "\\" + filename + ext
+	f=open(path,'rb');
+	content=f.read();
+	return content;
+	
+	
+
+@post('/upload2')
+def do_upload2():
+	dir = get_save_path_for_category()
+	print ( dir ) 
+	filename = str ( randint ( 1 ,  10000 ) )
+	ext='.jpg'
+        # upload.filename = filename + ext
+    # # print(upload.filename)
+    # # upload.save(dir, True)  # appends upload.filename automatically
+	path = dir + "\\" + filename + ext
+	print(path)
+	f = open(path, 'wb')
+	f.write(base64.standard_b64decode(request.body.read()))
+	f.close()
+	result=path
+	if request.headers['Content-Type'] == 'application/json':
+		return json.dumps({'result': 'octet stream1'})
+	else:
+		response.headers['Content-Type'] = 'Content-Type: application/json; charset=UTF-8'
+		return json.dumps({'result':filename})
+
+
 @post('/upload')
 def do_upload():
-    upload = request.files.get('upload')
-    name, ext = os.path.splitext(upload.filename)
-    if ext not in ('.png','.jpg','.jpeg'):
-        return 'File extension not allowed.'
-
-    save_path = get_save_path_for_category()
+    # upload = request.files.get('image')
+    # name, ext = os.path.splitext(upload.filename)
+    # if ext not in ('.png','.jpg','.jpeg'):
+    #    return 'File extension not allowed.'
+    # if request.headers['Content-Type'] == 'application/json':
+    # return json.dumps({'result': 'octet stream1'})
+    # else:
+    # print(request.body)
+    body = request.body.read()
+    jsonObj=json.loads(body);
+    # return json.dumps({'result': jsonObj['content']})
+    # save_path = get_save_path_for_category()
     # upload.filename = 'tmp1'+ext
-    try:
+    #try:
         # tempFile = tempfile.NamedTemporaryFile(suffix=ext)
-        # filename = 'tmp1'+ext
-        # dir= os.path.dirname(tempFile.name)
-        # head,tail = ntpath.split(tempFile.name)
-        # print("dir= "+dir+"\n")
-        # print(tail)
-        # upload.filename=tail
-        # tempFile.write(upload.file)
-        dir =get_save_path_for_category()
-        print(dir)
-        filename = str(randint(1,10000))
-        upload.filename = filename+ext
-        print(upload.filename)
-        upload.save(dir, True) # appends upload.filename automatically
-        path = dir+"\\"+filename+ext
-        result = snap_sudoku(path)
-        # response.headers['Content-Type'] = 'application/json'
-    except:
-        return json.dumps({'result': 'Server error'})
-    else:
-        os.remove(path)
-        return json.dumps({'path':path,'result':result})
+    # filename = 'tmp1'+ext
+    # dir= os.path.dirname(tempFile.name)
+    # head,tail = ntpath.split(tempFile.name)
+    # print("dir= "+dir+"\n")
+    # print(tail)
+    # upload.filename=tail
+    # tempFile.write(upload.file)
+    dir = get_save_path_for_category()
+    print(dir)
+    filename = str(randint(1, 10000))
+    ext='.jpg'
+        # upload.filename = filename + ext
+    # # print(upload.filename)
+    # # upload.save(dir, True)  # appends upload.filename automatically
+    path = dir + "\\" + filename + ext
+    print(path)
+    f = open(path, 'wb')
+    f.write(jsonObj['content'])
+    f.close()
+    result=path
+        # result = snap_sudoku(path)
+    #    result='ss'
+    # response.headers['Content-Type'] = 'application/json'
+    #except IOError as e:
+     #   print("I/O error({0}): {1}".format(e.errno, e.strerror))
+      #  return json.dumps({'result': 'Cannot solve sudoku'})
+    # else:
+    # os.remove(path)
+    return json.dumps({'result': result})
+
 
 @route('/')
 def root():
