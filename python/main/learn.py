@@ -5,7 +5,7 @@ import cv2
 import joblib
 
 # Generate training set
-TRAIN_PATH = "Dataset\Train"
+TRAIN_PATH = "dataset\\train"
 list_folder = os.listdir(TRAIN_PATH)
 trainset = []
 for folder in list_folder:
@@ -22,7 +22,7 @@ for i in range(0,10):
     train_label += temp
 
 # Generate testing set
-TEST_PATH = "Dataset\Test"
+TEST_PATH = "dataset\\test"
 list_folder = os.listdir(TEST_PATH)
 testset = []
 test_label = []

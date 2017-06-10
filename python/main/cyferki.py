@@ -48,8 +48,30 @@ for i in range(0, 9):
                         else:
                             X[x, y] = 0
 
-            #################
+            ##########3
             # cv2.imshow('a', X)
+            # cv2.waitKey(0)
+            #################
+            # # change input
+            # for y in range(0,36):
+            #     for x in range(0,36):
+            #         if X[x,y] > 200:
+            #             X[x,y]=1
+            #         else:
+            #             X[x,y]=0
+            #
+            #
+            # kernel = np.ones((3,3),np.uint8)
+            # X = cv2.erode(X,kernel,iterations = 1)
+            # X = cv2.dilate(X,kernel,iterations = 1)
+            #
+            # for y in range(0,36):
+            #     for x in range(0,36):
+            #         if X[x,y] ==1:
+            #             X[x,y]=255
+
+            ###############
+            # cv2.imshow('b', X)
             # cv2.waitKey(0)
             X = np.reshape(X, (1, -1))
             num = clf.predict(X)
