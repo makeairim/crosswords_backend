@@ -12,13 +12,15 @@ clf = joblib.load('classifier.pkl')
 is_print = True
 
 img = cv2.imread('test1.jpg')
+cv2.imshow('test1.jpg',img)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-img = cv2.blur(img, (1, 1))
+# img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 101, 1)
+# img = cv2.blur(img, (1, 1))
 height, width = img.shape[:2]
 step_x = width / 9
 step_y = height / 9
 # todo
-img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 101, 1)
+
 for i in range(0, 9):
     for j in range(0, 9):
         x1 = int(i * step_x)
@@ -48,7 +50,7 @@ for i in range(0, 9):
                         else:
                             X[x, y] = 0
 
-            ##########3
+            ##########
             # cv2.imshow('a', X)
             # cv2.waitKey(0)
             #################
@@ -61,15 +63,14 @@ for i in range(0, 9):
             #             X[x,y]=0
             #
             #
-            # kernel = np.ones((3,3),np.uint8)
+            # kernel = np.ones((2,2),np.uint8)
             # X = cv2.erode(X,kernel,iterations = 1)
-            # X = cv2.dilate(X,kernel,iterations = 1)
+            # # X = cv2.dilate(X,kernel,iterations = 1)
             #
             # for y in range(0,36):
             #     for x in range(0,36):
             #         if X[x,y] ==1:
             #             X[x,y]=255
-
             ###############
             # cv2.imshow('b', X)
             # cv2.waitKey(0)
