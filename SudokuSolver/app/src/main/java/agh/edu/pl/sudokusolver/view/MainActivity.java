@@ -6,22 +6,28 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.net.ProtocolException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import agh.edu.pl.sudokusolver.R;
+import agh.edu.pl.sudokusolver.android.Preference;
 import agh.edu.pl.sudokusolver.android.network.Utils;
-import agh.edu.pl.sudokusolver.model.SudokuResult;
 import agh.edu.pl.sudokusolver.presenter.MainPresenter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,13 +39,18 @@ public class MainActivity extends AppCompatActivity {
     public static final Boolean noSolutionsAvailable = true;
     private MainPresenter mainPresenter;
 
-    @BindView(R.id.my_toolbar)
+    @BindView(R.id.layout_toolbar)
     Toolbar toolbarTop;
     @BindView(R.id.tv_test_title)
     TextView title;
+    @BindView(R.id.photo_view)
+    PhotoView mainPhotoIV;
+
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
 
     public Uri selectedImage;
-    private SudokuResult solvedSudoku;
+    private String solvedSudokuPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +60,20 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbarTop);
         mainPresenter = new MainPresenter();
         Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
-                if (!report.areAllPermissionsGranted()) {
+                if (!report.areAllPermissionsGranted() && report.getDeniedPermissionResponses().size()>0) {
+                    report.getDeniedPermissionResponses().stream().forEach(permissionDeniedResponse -> Log.d("perms:",permissionDeniedResponse.getPermissionName()));
                     showFailureDialog(getString(R.string.perms_not_granted), () -> {
                         finish();
                         return true;
                     });
-                }else{
+                } else {
                     if (noSolutionsAvailable) {
                         createBottomImagePicker();
+                    } else {
+                        mainPresenter.onTakeView(MainActivity.this);
                     }
                 }
             }
@@ -79,7 +93,11 @@ public class MainActivity extends AppCompatActivity {
                     if (!isOnline) {
                         handleNoConnection();
                     } else {
-                        mainPresenter.onTakeView(this);
+                        try {
+                            mainPresenter.onTakeView(this);
+                        }catch(Throwable e){
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .create();
@@ -102,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+        alertDialog.show();
     }
 
     @Override
@@ -121,17 +140,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setErrorMsg() {
-        showFailureDialog("Networking error", () -> true);
+    public void setErrorMsg(String msg) {
+        showFailureDialog(msg, () -> true);
     }
 
-    public void setSolvedSudoku(SudokuResult solvedSudoku) {
-        this.solvedSudoku = solvedSudoku;
+    public void setSolvedSudoku(String solvedSudokuPath) {
+        this.solvedSudokuPath = solvedSudokuPath;
     }
 
     public void update() {
-
-        title.setText(solvedSudoku.getResult());
+        title.setText(solvedSudokuPath);
+        Uri uri = Uri.parse(Preference.getBaseUrl()).buildUpon().appendPath("image").appendPath(solvedSudokuPath).build();
+        Picasso.with(this).load(uri).into(mainPhotoIV);
     }
 
 

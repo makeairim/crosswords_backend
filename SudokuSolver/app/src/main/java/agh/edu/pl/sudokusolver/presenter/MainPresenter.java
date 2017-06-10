@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import agh.edu.pl.sudokusolver.android.network.SudokuServiceRequestProvider;
+import agh.edu.pl.sudokusolver.android.utils.Files;
 import agh.edu.pl.sudokusolver.model.SudokuResult;
 import agh.edu.pl.sudokusolver.view.MainActivity;
 import io.reactivex.Observable;
@@ -23,23 +24,29 @@ public class MainPresenter {
     private Disposable sudokuSolvedDisposable;
     private String msg;
     private boolean error;
-    private SudokuResult sudokuResult;
-public static final String TAG=MainPresenter.class.getSimpleName();
+    private String sudokuResultPath;
+    public static final String TAG = MainPresenter.class.getSimpleName();
+    private Object selectedPhotoSolution;
+    private String lastPhoto;
+
     public void onTakeView(MainActivity view) {
         this.view = view;
         error = false;
         sudokuSolvedDisposable = null; //todo cancel request
-        File file = getFile(view.selectedImage);
-        if (file.exists()) {
-            sudokuSolvedDisposable = retrieveSolvedSudoku(file).
-                    doOnError(throwable -> {setError("Error from server");
-            Log.d(TAG, "onTakeView: "+throwable.getMessage());}).
-                    doFinally(() -> publish()).
-                    subscribe(sudokuResult ->
-                    this.sudokuResult = sudokuResult);
-        } else {
-            setError("File does not exist");
-            publish();
+        if (view.selectedImage != null) {
+            getSelectedPhotoSolution();
+        }
+        getLatestSolution();
+    }
+
+    private void getLatestSolution() {
+        String path = Files.getLastImagePath();
+        if (path == null) return;
+        File file = new File(path);
+        if (selectedPhotoSolution != null) {
+            if (!file.getAbsolutePath().equals(selectedPhotoSolution)) {
+                publish();
+            }
         }
     }
 
@@ -60,13 +67,43 @@ public static final String TAG=MainPresenter.class.getSimpleName();
 
     private void publish() {
         if (error) {
-            view.setErrorMsg();
-            return;
+            view.setErrorMsg(msg);
+        } else if (sudokuResultPath != null) {
+            view.setSolvedSudoku(sudokuResultPath);
+            view.update();
         }
-
-        view.setSolvedSudoku(sudokuResult);
-        view.update();
+        if (!sudokuSolvedDisposable.isDisposed()) sudokuSolvedDisposable.dispose();
+        sudokuSolvedDisposable = null;
     }
 
 
+    public void getSelectedPhotoSolution() {
+        File file = getFile(view.selectedImage);
+        if (file.exists()) {
+            sudokuSolvedDisposable = retrieveSolvedSudoku(file).
+                    doOnError(throwable -> {
+                        setError("Error from server");
+                        Log.d(TAG, "onTakeView: ");
+                        throwable.printStackTrace();
+                    }).
+                    doFinally(() -> publish()).
+                    subscribe(sudokuResult -> {
+                        error = sudokuResult.getResult() != null ? false : true;
+                        if (!error) {
+                            //this.sudokuResultPath = Files.saveSolution(sudokuResult);
+                            //if (this.sudokuResultPath == null || sudokuResultPath.isEmpty()) {
+                            //setError(sudokuResult.getResult());
+                            this.sudokuResultPath=sudokuResult.getResult();
+                            publish();
+                                //setError("Incorrect file format from server");
+                            //}
+                        }
+                    });
+
+
+        } else {
+            setError("File does not exist");
+            publish();
+        }
+    }
 }

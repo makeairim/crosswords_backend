@@ -45,5 +45,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'gun0912.ted:tedbottompicker:1.0.12'
     compile 'com.karumi:dexter:4.1.0'
+    compile 'com.github.chrisbanes:PhotoView:2.0.0'
 
 }

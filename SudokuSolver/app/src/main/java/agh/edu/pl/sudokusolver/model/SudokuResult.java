@@ -37,6 +37,9 @@ public class SudokuResult implements Parcelable {
 
     };
 
+    public SudokuResult() {
+    }
+
     public String getPath() {
         return path;
     }
