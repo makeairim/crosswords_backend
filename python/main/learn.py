@@ -1,51 +1,38 @@
-import numpy as np
 from sklearn.svm import LinearSVC
+import numpy as np
 import os
 import cv2
-import joblib
+import pickle
 
-# Generate training set
-TRAIN_PATH = "dataset\\train"
-list_folder = os.listdir(TRAIN_PATH)
-trainset = []
-for folder in list_folder:
-    flist = os.listdir(os.path.join(TRAIN_PATH, folder))
-    for f in flist:
-        im = cv2.imread(os.path.join(TRAIN_PATH, folder, f))
-        im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY )
-        im = cv2.resize(im, (36,36))
-        trainset.append(im)
-# Labeling for trainset
-train_label = []
-for i in range(0,10):
-    temp = 500*[i]
-    train_label += temp
 
-# Generate testing set
-TEST_PATH = "dataset\\test"
-list_folder = os.listdir(TEST_PATH)
-testset = []
-test_label = []
-for folder in list_folder:
-    flist = os.listdir(os.path.join(TEST_PATH, folder))
-    for f in flist:
-        im = cv2.imread(os.path.join(TEST_PATH, folder, f))
-        im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY )
-        im = cv2.resize(im, (36,36))
-        testset.append(im)
-        test_label.append(int(folder))
-trainset = np.reshape(trainset, (5000, -1))
+def get_image(path):
+    img = cv2.imread(path)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    img = cv2.resize(img, (36, 36))
+    return img
 
-# Create an linear SVM object
+
+def generate_set_and_label(path):
+    set = []
+    label = []
+    for folder in os.listdir(path):
+        file_list = os.listdir(os.path.join(path, folder))
+        for filename in file_list:
+            img = get_image(os.path.join(path, folder, filename))
+            set.append(img)
+            label.append(int(folder))
+    set = np.reshape(set, (len(set), -1))
+    return set, label
+
+print("Learning...")
+test_set, test_label = generate_set_and_label("dataset\\test")
+print("...")
+train_set, train_label = generate_set_and_label("dataset\\train")
+print("...")
 clf = LinearSVC()
+clf.fit(train_set, train_label)
 
-# Perform the training
-clf.fit(trainset, train_label)
-print("Training finished successfully")
+print("Test accuracy: " + str(clf.score(test_set, test_label)))
 
-# Testing
-testset = np.reshape(testset, (len(testset), -1))
-y = clf.predict(testset)
-print("Testing accuracy: " + str(clf.score(testset, test_label)))
-
-joblib.dump(clf, "classifier.pkl", compress=3)
+pickle.dump(clf, open("recognizer.pickle", "wb"))
+print("Success.")
