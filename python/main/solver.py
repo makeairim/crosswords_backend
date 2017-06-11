@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 import pickle
 import sys
-import learn
+
+from backtrack import solveSudoku, printGrid
+
 
 def clear_digit_borders(digit, size):
     for y in range(0, size):
@@ -80,7 +82,7 @@ def get_matrix(filepath):
                 part.append(predicted_number[0])
                 cv2.putText(img, str(predicted_number[0]), (x1 + int(step_x / 2), y1 + int(step_y / 2)),
                             cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (225, 0, 0), 2)
-                cv2.putText(img_jpg, "lalala", (x, y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (225, 0, 0), 2)
+                # cv2.putText(img_jpg, "lalala", (x, y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (225, 0, 0), 2)
         result.append(part)
     # print(result)
     # cv2.imshow('img', img)
@@ -92,7 +94,10 @@ def get_matrix(filepath):
 # get_matrix('sudoku.jpg')
 if __name__ == '__main__':
     try:
-        get_matrix(sys.argv[1])
+        matrix=get_matrix(sys.argv[1])
+        printGrid(matrix)
+        (res, grid) = solveSudoku(matrix)
+        if (res == True):
+            printGrid(grid)
     except:
         raise
-
