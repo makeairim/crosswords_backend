@@ -52,7 +52,7 @@ def usedInBox(grid,boxStRow,boxStCol,num):
                 return True
     return False
 
-def printGrid(grid):
+def print_grid(grid):
     BS=u'\0008'
     for i in range(0,sudokuSize):
         for j in range(0,sudokuSize):
@@ -73,7 +73,7 @@ def mainTest():
           [0, 0, 5, 2, 0, 6, 3, 0, 0]]
     (res,grid)=solveSudoku(grid)
     if(res==True):
-        printGrid(grid)
+        print_grid(grid)
     else:
         print("No solution")
 
