@@ -79,6 +79,7 @@ def get_matrix(filepath):
                 part.append(predicted_number[0])
                 cv2.putText(img, str(predicted_number[0]), (x1 + int(step_x / 2), y1 + int(step_y / 2)),
                             cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (225, 0, 0), 2)
+                cv2.putText(img_jpg, "lalala", (x, y), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (225, 0, 0), 2)
         result.append(part)
     # print(result)
     # cv2.imshow('img', img)
