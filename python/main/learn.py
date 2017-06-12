@@ -1,8 +1,8 @@
-from sklearn.svm import LinearSVC
 import numpy as np
 import os
 import cv2
 import pickle
+from sklearn.svm import LinearSVC
 
 
 def get_image(path):
@@ -24,15 +24,10 @@ def generate_set_and_label(path):
     set = np.reshape(set, (len(set), -1))
     return set, label
 
-print("Learning...")
+
 test_set, test_label = generate_set_and_label("dataset\\test")
-print("...")
 train_set, train_label = generate_set_and_label("dataset\\train")
-print("...")
 clf = LinearSVC()
 clf.fit(train_set, train_label)
-
-print("Test accuracy: " + str(clf.score(test_set, test_label)))
-
+# print("Test accuracy: " + str(clf.score(test_set, test_label)))
 pickle.dump(clf, open("recognizer.pickle", "wb"))
-print("Success.")
