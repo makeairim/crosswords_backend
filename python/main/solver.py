@@ -1,10 +1,10 @@
-import copy
 import cv2
 import numpy as np
 import pickle
 import sys
 
-from backtrack import print_grid,solveSudoku
+from backtrack import print_grid, solveSudoku
+
 
 def clear_digit_borders(digit, size):
     for y in range(0, size):
@@ -104,6 +104,24 @@ def to_labeled_rgb_img(img, grid, matrix2):
     return img
 
 
+
+if __name__ == '__main__' :
+    try:
+        img = to_bw_cut_image(sys.argv[1])
+        matrix = get_matrix(img)
+        print_grid(matrix)
+        (res, grid, orig) = solveSudoku(matrix)
+        img = to_labeled_rgb_img(img, grid, orig)
+        cv2.imshow('img', img)
+        cv2.imwrite('solution.jpg', img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        if (res == True):
+            print_grid(grid)
+    except:
+        raise
+
+
 def solve(path):
     try:
         print(path)
@@ -120,41 +138,3 @@ def solve(path):
     except:
         raise
     return True
-
-
-
-if __name__ == '__main__':
-    try:
-        img = to_bw_cut_image(sys.argv[1])
-        matrix = get_matrix(img)
-        print_grid(matrix)
-        # matrix = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
-        #           [5, 2, 0, 0, 0, 0, 0, 0, 0],
-        #           [0, 8, 7, 0, 0, 0, 0, 3, 1],
-        #           [0, 0, 3, 0, 1, 0, 0, 8, 0],
-        #           [9, 0, 0, 8, 6, 3, 0, 0, 5],
-        #           [0, 5, 0, 0, 9, 0, 6, 0, 0],
-        #           [1, 3, 0, 0, 0, 0, 2, 5, 0],
-        #           [0, 0, 0, 0, 0, 0, 0, 7, 4],
-        #           [0, 0, 5, 2, 0, 6, 3, 0, 0]]
-        # matrix = [[0, 0, 7, 5, 0, 1, 4, 3, 0],
-        #           [0, 1, 0, 7, 0, 0, 2, 0, 5],
-        #           [0, 0, 0, 9, 0, 6, 0, 7, 1],
-        #           [0, 8, 2, 0, 0, 0, 5, 6, 0],
-        #           [0, 0, 0, 2, 0, 5, 0, 0, 0],
-        #           [0, 3, 5, 0, 0, 0, 1, 4, 0],
-        #           [1, 5, 0, 4, 0, 3, 0, 0, 0],
-        #           [7, 0, 9, 0, 0, 2, 0, 1, 0],
-        #           [0, 6, 3, 1, 0, 8, 7, 0, 0]]
-
-        # (res, grid) = solveSudoku(matrix)
-        (res, grid, orig) = solve(matrix)
-        img = to_labeled_rgb_img(img, grid, orig)
-        cv2.imshow('img', img)
-        cv2.imwrite('solution.jpg', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        if (res == True):
-            print_grid(grid)
-    except:
-        raise

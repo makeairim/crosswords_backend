@@ -87,8 +87,8 @@ def mainTest():
         else:
             print("No solution")
 
-    if __name__ == '__main__':
-        mainTest()
+if __name__ == '__main__':
+    mainTest()
 
 
 def solveSudoku(matrix):
