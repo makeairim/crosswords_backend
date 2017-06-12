@@ -2,7 +2,8 @@
 unassignedCel=0
 sudokuSize=9
 
-def solveSudoku(grid):
+def solveSudoku(matrix):
+    grid=matrix
     (row,col)=findEmptyCell(grid)
     if(row==-1):
         return (True,grid)
