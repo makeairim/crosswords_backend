@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 import sys
 
-from backtrack import solveSudoku, printGrid
+from backtrack import solveSudoku, print_grid
 
 
 def clear_digit_borders(digit, size):
@@ -26,7 +26,7 @@ def clear_digit_borders(digit, size):
     return digit
 
 
-def cut_image(filepath):
+def to_bw_cut_image(filepath):
     img = cv2.imread(filepath)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     thresh = cv2.adaptiveThreshold(gray, 255, 1, 1, 11, 2)
@@ -56,8 +56,7 @@ def cut_image(filepath):
     return img
 
 
-def get_matrix(filepath):
-    img = cut_image(filepath)
+def get_matrix(img):
     clf = pickle.load(open("recognizer.pickle", "rb"))
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 101, 1)
     # img = cv2.blur(img, (1, 1))
@@ -92,13 +91,41 @@ def get_matrix(filepath):
 
 
 # get_matrix('sudoku.jpg')
+def to_labeled_rgb_img(img, grid):
+    img =cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    height, width = img.shape[:2]
+    step_x = width / 9
+    step_y = height / 9
+    for j in range(0, 9):
+        for i in range(0, 9):
+            x = int(i * step_x)
+            y = int(j * step_y)
+            cv2.putText(img, str(grid[j][i]), (x + int(step_x / 2), y + int(step_y / 2)),
+                        cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (0, 255, 0), 2)
+    return img
+
+
 if __name__ == '__main__':
     try:
-        matrix=get_matrix(sys.argv[1])
-        printGrid(matrix)
+        img = to_bw_cut_image(sys.argv[1])
+        matrix = get_matrix(img)
+        print_grid(matrix)
+        # matrix = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
+        #           [5, 2, 0, 0, 0, 0, 0, 0, 0],
+        #           [0, 8, 7, 0, 0, 0, 0, 3, 1],
+        #           [0, 0, 3, 0, 1, 0, 0, 8, 0],
+        #           [9, 0, 0, 8, 6, 3, 0, 0, 5],
+        #           [0, 5, 0, 0, 9, 0, 6, 0, 0],
+        #           [1, 3, 0, 0, 0, 0, 2, 5, 0],
+        #           [0, 0, 0, 0, 0, 0, 0, 7, 4],
+        #           [0, 0, 5, 2, 0, 6, 3, 0, 0]]
         (res, grid) = solveSudoku(matrix)
-
+        img = to_labeled_rgb_img(img, grid)
+        cv2.imshow('img', img)
+        cv2.imwrite('solution.jpg',img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         if (res == True):
-            printGrid(grid)
+            print_grid(grid)
     except:
         raise

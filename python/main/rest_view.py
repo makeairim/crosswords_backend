@@ -3,7 +3,7 @@ import json
 from bottle import request, response, static_file, post, get, route, run, template
 from random import randint
 
-from backtrack import solveSudoku, printGrid
+from backtrack import solveSudoku, print_grid
 from solver import get_matrix
 
 
@@ -75,7 +75,7 @@ def do_upload2():
     matrix = get_matrix(path)
     (res, grid) = solveSudoku(matrix)
     if (res == True):
-        printGrid(grid)
+        print_grid(grid)
     if request.headers['Content-Type'] == 'application/json':
         return json.dumps({'result': 'octet stream1'})
     else:
