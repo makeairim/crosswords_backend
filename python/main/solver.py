@@ -97,6 +97,7 @@ if __name__ == '__main__':
         matrix=get_matrix(sys.argv[1])
         printGrid(matrix)
         (res, grid) = solveSudoku(matrix)
+
         if (res == True):
             printGrid(grid)
     except:
