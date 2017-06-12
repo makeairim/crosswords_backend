@@ -104,14 +104,22 @@ def to_labeled_rgb_img(img, grid, matrix2):
     return img
 
 
-
-if __name__ == '__main__' :
+if __name__ == '__main__':
     try:
         img = to_bw_cut_image(sys.argv[1])
-        matrix = get_matrix(img)
-        print_grid(matrix)
-        (res, grid, orig) = solveSudoku(matrix)
-        img = to_labeled_rgb_img(img, grid, orig)
+        matrix2 = get_matrix(img)
+        print_grid(matrix2)
+        matrix = [[0, 0, 0, 0, 0, 0, 2, 0, 3],
+                  [8, 0, 5, 2, 0, 0, 0, 0, 0],
+                  [0, 0, 3, 1, 0, 0, 4, 0, 0],
+                  [0, 0, 2, 0, 0, 1, 0, 0, 5],
+                  [0, 5, 8, 6, 0, 2, 3, 1, 0],
+                  [3, 0, 0, 9, 0, 0, 6, 0, 0],
+                  [0, 0, 4, 0, 0, 8, 5, 0, 0],
+                  [0, 0, 0, 0, 0, 3, 9, 0, 8],
+                  [9, 0, 1, 0, 0, 0, 0, 0, 0]]
+        # (res, grid, orig) = solveSudoku(matrix)
+        img = to_labeled_rgb_img(img, matrix2, matrix)
         cv2.imshow('img', img)
         cv2.imwrite('solution.jpg', img)
         cv2.waitKey(0)
@@ -127,7 +135,7 @@ def solve(path):
         print(path)
         img = to_bw_cut_image(path)
         matrix = get_matrix(img)
-        print_grid(matrix)
+        # print_grid(matrix)
         # (res, grid) = solveSudoku(matrix)
         (res, grid, orig) = solveSudoku(matrix)
         img = to_labeled_rgb_img(img, grid, orig)

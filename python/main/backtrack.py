@@ -68,7 +68,7 @@ def print_grid(grid):
     BS = u'\0008'
     for i in range(0, sudokuSize):
         for j in range(0, sudokuSize):
-            print(str(grid[i][j]) + " ", sep=' ', end = '', flush = True)
+            print(str(grid[i][j]),' ', end = "")
             print("\n")
 
 def mainTest():
@@ -87,10 +87,6 @@ def mainTest():
         else:
             print("No solution")
 
-if __name__ == '__main__':
-    mainTest()
-
-
 def solveSudoku(matrix):
     mTest = m_test()
     if (matrix == mTest):
@@ -101,3 +97,6 @@ def solveSudoku(matrix):
         orig = copy.deepcopy(matrix)
         (a, b) = solve(matrix)
     return (a, b, orig)
+
+if __name__ == '__main__':
+    mainTest()
