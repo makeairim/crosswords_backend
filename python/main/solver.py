@@ -104,6 +104,25 @@ def to_labeled_rgb_img(img, grid, matrix2):
     return img
 
 
+def solve(path):
+    try:
+        print(path)
+        img = to_bw_cut_image(path)
+        matrix = get_matrix(img)
+        print_grid(matrix)
+        # (res, grid) = solveSudoku(matrix)
+        (res, grid, orig) = solveSudoku(matrix)
+        img = to_labeled_rgb_img(img, grid, orig)
+        # f = open(path, 'wb')
+        # f.write(img)
+        # f.close()
+        cv2.imwrite(path, img)
+    except:
+        raise
+    return True
+
+
+
 if __name__ == '__main__':
     try:
         img = to_bw_cut_image(sys.argv[1])
@@ -139,20 +158,3 @@ if __name__ == '__main__':
             print_grid(grid)
     except:
         raise
-
-def solve(path):
-    try:
-        print(path)
-        img = to_bw_cut_image(path)
-        matrix = get_matrix(img)
-        print_grid(matrix)
-        # (res, grid) = solveSudoku(matrix)
-        (res, grid, orig) = solveSudoku(matrix)
-        img = to_labeled_rgb_img(img, grid, orig)
-        # f = open(path, 'wb')
-        # f.write(img)
-        # f.close()
-        cv2.imwrite(path, img)
-    except:
-        raise
-    return True

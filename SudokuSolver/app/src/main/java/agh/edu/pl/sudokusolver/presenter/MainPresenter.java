@@ -30,6 +30,7 @@ public class MainPresenter {
     public static final String TAG = MainPresenter.class.getSimpleName();
     private Object selectedPhotoSolution;
     private String lastPhoto;
+    private static final String noResult="No solution for sudoku";
 
     public void onTakeView(MainActivity view) {
         this.view = view;
@@ -87,18 +88,19 @@ public class MainPresenter {
         File file = getFile(view.selectedImage);
         if (file.exists()) {
             sudokuSolvedDisposable = retrieveSolvedSudoku(file).
-                   onErrorReturnItem(new SudokuResult()).
+                   onErrorReturnItem(new SudokuResult(noResult)).
                     doFinally(() -> publish()).
                     subscribe(sudokuResult -> {
-                        error = sudokuResult.getResult() != null ? false : true;
+                        error = sudokuResult.getResult() != null && !sudokuResult.equals(noResult) ? false : true;
                         if (!error) {
                             //this.sudokuResultPath = Files.saveSolution(sudokuResult);
                             //if (this.sudokuResultPath == null || sudokuResultPath.isEmpty()) {
                             //setError(sudokuResult.getResult());
                             this.sudokuResultPath=sudokuResult.getResult();
-                            publish();
                                 //setError("Incorrect file format from server");
                             //}
+                        }else{
+                            setError("No solution for sudoku");
                         }
                     });
 

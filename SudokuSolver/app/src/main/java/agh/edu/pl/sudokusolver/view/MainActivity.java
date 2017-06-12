@@ -19,12 +19,8 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
-import java.net.ProtocolException;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import agh.edu.pl.sudokusolver.R;
 import agh.edu.pl.sudokusolver.android.Preference;
 import agh.edu.pl.sudokusolver.android.network.Utils;
@@ -41,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.layout_toolbar)
     Toolbar toolbarTop;
+
     @BindView(R.id.tv_test_title)
     TextView title;
+
     @BindView(R.id.photo_view)
     PhotoView mainPhotoIV;
 
@@ -60,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbarTop);
         mainPresenter = new MainPresenter();
         Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+                .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
-                if (!report.areAllPermissionsGranted() && report.getDeniedPermissionResponses().size()>0) {
-                    report.getDeniedPermissionResponses().stream().forEach(permissionDeniedResponse -> Log.d("perms:",permissionDeniedResponse.getPermissionName()));
+                if (!report.areAllPermissionsGranted() && report.getDeniedPermissionResponses().size() > 0) {
+                    report.getDeniedPermissionResponses().stream().forEach(permissionDeniedResponse -> Log.d("perms:", permissionDeniedResponse.getPermissionName()));
                     showFailureDialog(getString(R.string.perms_not_granted), () -> {
                         finish();
                         return true;
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         try {
                             mainPresenter.onTakeView(this);
-                        }catch(Throwable e){
+                        } catch (Throwable e) {
                             e.printStackTrace();
                         }
                     }

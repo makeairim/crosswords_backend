@@ -65,4 +65,7 @@ public class SudokuResult implements Parcelable {
         return 0;
     }
 
+    public SudokuResult(String result) {
+        this.result = result;
+    }
 }

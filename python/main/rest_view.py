@@ -34,26 +34,14 @@ def send_image(filename):
     return static_file(filename, root=get_save_path_for_category(), mimetype='image/png')
 
 
-# @route('/upload', method='POST')
-# def do_upload():
-#     upload     = request.files.get('upload')
-#     name, ext = os.path.splitext(upload.filename)
-#     if ext not in ('.png','.jpg','.jpeg'):
-#         return 'File extension not allowed.'
-#
-#     save_path = get_save_path_for_category()
-#     upload.save(save_path) # appends upload.filename automatically
-#
-#     return 'OK'
-
 @get('/image/<filename>')
 def do_download(filename):
     dir = get_save_path_for_category()
     ext = '.jpg'
     path = dir + "\\" + filename + ext
-    f = open(path, 'rb');
-    content = f.read();
-    return content;
+    f = open(path, 'rb')
+    content = f.read()
+    return content
 
 
 @post('/upload2')
@@ -62,9 +50,6 @@ def do_upload2():
     print (dir)
     filename = str(randint(1, 10000))
     ext = '.jpg'
-    # upload.filename = filename + ext
-    # # print(upload.filename)
-    # # upload.save(dir, True)  # appends upload.filename automatically
     path = dir + "\\" + filename + ext
     print(path)
     f = open(path, 'wb')
