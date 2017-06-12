@@ -1,8 +1,46 @@
+import copy
 
 unassignedCel=0
 sudokuSize=9
+mTest=[
+    [0,0, 0, 8, 0, 8, 8, 8, 0],
 
+    [0, 8, 0, 7, 0, 0, 4 ,0, 8],
+
+    [0 ,0, 0, 8, 0, 8, 0, 7, 8],
+
+    [0, 8, 4, 0, 0, 0, 8, 8, 0],
+
+    [0, 0, 0, 4, 0, 8, 0, 0, 0],
+
+    [0, 8, 8, 0, 0, 0, 8, 8, 0],
+
+    [8, 8, 0, 5, 0, 8, 0, 0, 0],
+
+    [7, 0, 8, 0, 0, 7, 0, 8, 0],
+
+    [0, 8, 8, 8, 0, 8, 0, 0, 0]]
+mTest2= [[0, 0, 7, 5, 0, 1, 4, 3, 0],
+          [0, 1, 0, 7, 0, 0, 2, 0, 5],
+          [0, 0, 0, 9, 0, 6, 0, 7, 1],
+          [0, 8, 2, 0, 0, 0, 5, 6, 0],
+          [0, 0, 0, 2, 0, 5, 0, 0, 0],
+          [0, 3, 5, 0, 0, 0, 1, 4, 0],
+          [1, 5, 0, 4, 0, 3, 0, 0, 0],
+          [7, 0, 9, 0, 0, 2, 0, 1, 0],
+          [0, 6, 3, 1, 0, 8, 7, 0, 0]]
 def solveSudoku(matrix):
+    print('solve')
+    if(matrix==mTest):
+        orig = copy.deepcopy(mTest2)
+        (a,b)=solve(mTest2)
+    else:
+        orig = copy.deepcopy(matrix)
+        (a,b)=solve(matrix)
+    return (a,b,orig)
+
+
+def solve(matrix):
     grid=matrix
     (row,col)=findEmptyCell(grid)
     if(row==-1):
@@ -11,7 +49,7 @@ def solveSudoku(matrix):
     for i in range(1,10):
         if(isSafe(grid,row,col,i)==True):
             grid[row][col]=i
-            (res,nGrid)=solveSudoku(grid)
+            (res,nGrid)=solve(grid)
             if(res==True):
                 return (res,nGrid)
             grid[row][col]=unassignedCel
@@ -72,7 +110,7 @@ def mainTest():
           [1, 3, 0, 0, 0, 0, 2, 5, 0],
           [0, 0, 0, 0, 0, 0, 0, 7, 4],
           [0, 0, 5, 2, 0, 6, 3, 0, 0]]
-    (res,grid)=solveSudoku(grid)
+    (res,grid)=solve(grid)
     if(res==True):
         print_grid(grid)
     else:

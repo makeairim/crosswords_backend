@@ -2,10 +2,8 @@ import base64
 import json
 from bottle import request, response, static_file, post, get, route, run, template
 from random import randint
-
-from backtrack import solveSudoku, print_grid
-from solver import get_matrix
-
+from solver import solve
+import os
 
 @get('/hello/<name>')
 def index(name):
@@ -19,7 +17,7 @@ _names.add('SomeName')
 
 
 def get_save_path_for_category():
-    return 'D:\MEGASync\Semestr6\studio\crosswords_backend'
+    return 'D:\MEGASync\Semestr6\studio'
 
 
 @get('/names')
@@ -71,11 +69,9 @@ def do_upload2():
     print(path)
     f = open(path, 'wb')
     f.write(base64.standard_b64decode(request.body.read()))
+    path=f.name
     f.close()
-    matrix = get_matrix(path)
-    (res, grid) = solveSudoku(matrix)
-    if (res == True):
-        print_grid(grid)
+    solve(path)
     if request.headers['Content-Type'] == 'application/json':
         return json.dumps({'result': 'octet stream1'})
     else:

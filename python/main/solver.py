@@ -1,10 +1,10 @@
+import copy
 import cv2
 import numpy as np
 import pickle
 import sys
 
-from backtrack import solveSudoku, print_grid
-
+from backtrack import print_grid,solveSudoku
 
 def clear_digit_borders(digit, size):
     for y in range(0, size):
@@ -90,7 +90,7 @@ def get_matrix(img):
 
 # get_matrix('sudoku.jpg')
 def to_labeled_rgb_img(img, grid, matrix2):
-    img =cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     height, width = img.shape[:2]
     step_x = width / 9
     step_y = height / 9
@@ -98,9 +98,9 @@ def to_labeled_rgb_img(img, grid, matrix2):
         for i in range(0, 9):
             x = int(i * step_x)
             y = int(j * step_y)
-            # if matrix2[j][i] == 0:
-            cv2.putText(img, str(grid[j][i]), (x + int(step_x / 2), y + int(step_y / 2)),
-                        cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (0, 255, 0), 2)
+            if matrix2[j][i] == 0:
+                cv2.putText(img, str(grid[j][i]), (x + int(step_x / 2), y + int(step_y / 2)),
+                            cv2.FONT_HERSHEY_SCRIPT_SIMPLEX, 1, (0, 255, 0), 2)
     return img
 
 
@@ -109,31 +109,50 @@ if __name__ == '__main__':
         img = to_bw_cut_image(sys.argv[1])
         matrix = get_matrix(img)
         print_grid(matrix)
-        matrix = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
-                  [5, 2, 0, 0, 0, 0, 0, 0, 0],
-                  [0, 8, 7, 0, 0, 0, 0, 3, 1],
-                  [0, 0, 3, 0, 1, 0, 0, 8, 0],
-                  [9, 0, 0, 8, 6, 3, 0, 0, 5],
-                  [0, 5, 0, 0, 9, 0, 6, 0, 0],
-                  [1, 3, 0, 0, 0, 0, 2, 5, 0],
-                  [0, 0, 0, 0, 0, 0, 0, 7, 4],
-                  [0, 0, 5, 2, 0, 6, 3, 0, 0]]
-        matrix = [[0, 0, 7, 5, 0, 1, 4, 3, 0],
-                  [0, 1, 0, 7, 0, 0, 2, 0, 5],
-                  [0, 0, 0, 9, 0, 6, 0, 7, 1],
-                  [0, 8, 2, 0, 0, 0, 5, 6, 0],
-                  [0, 0, 0, 2, 0, 5, 0, 0, 0],
-                  [0, 3, 5, 0, 0, 0, 1, 4, 0],
-                  [1, 5, 0, 4, 0, 3, 0, 0, 0],
-                  [7, 0, 9, 0, 0, 2, 0, 1, 0],
-                  [0, 6, 3, 1, 0, 8, 7, 0, 0]]
-        (res, grid) = solveSudoku(matrix)
-        img = to_labeled_rgb_img(img, grid, matrix)
+        # matrix = [[3, 0, 6, 5, 0, 8, 4, 0, 0],
+        #           [5, 2, 0, 0, 0, 0, 0, 0, 0],
+        #           [0, 8, 7, 0, 0, 0, 0, 3, 1],
+        #           [0, 0, 3, 0, 1, 0, 0, 8, 0],
+        #           [9, 0, 0, 8, 6, 3, 0, 0, 5],
+        #           [0, 5, 0, 0, 9, 0, 6, 0, 0],
+        #           [1, 3, 0, 0, 0, 0, 2, 5, 0],
+        #           [0, 0, 0, 0, 0, 0, 0, 7, 4],
+        #           [0, 0, 5, 2, 0, 6, 3, 0, 0]]
+        # matrix = [[0, 0, 7, 5, 0, 1, 4, 3, 0],
+        #           [0, 1, 0, 7, 0, 0, 2, 0, 5],
+        #           [0, 0, 0, 9, 0, 6, 0, 7, 1],
+        #           [0, 8, 2, 0, 0, 0, 5, 6, 0],
+        #           [0, 0, 0, 2, 0, 5, 0, 0, 0],
+        #           [0, 3, 5, 0, 0, 0, 1, 4, 0],
+        #           [1, 5, 0, 4, 0, 3, 0, 0, 0],
+        #           [7, 0, 9, 0, 0, 2, 0, 1, 0],
+        #           [0, 6, 3, 1, 0, 8, 7, 0, 0]]
+
+        # (res, grid) = solveSudoku(matrix)
+        (res, grid, orig) = solve(matrix)
+        img = to_labeled_rgb_img(img, grid, orig)
         cv2.imshow('img', img)
-        cv2.imwrite('solution.jpg',img)
+        cv2.imwrite('solution.jpg', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         if (res == True):
             print_grid(grid)
     except:
         raise
+
+def solve(path):
+    try:
+        print(path)
+        img = to_bw_cut_image(path)
+        matrix = get_matrix(img)
+        print_grid(matrix)
+        # (res, grid) = solveSudoku(matrix)
+        (res, grid, orig) = solveSudoku(matrix)
+        img = to_labeled_rgb_img(img, grid, orig)
+        # f = open(path, 'wb')
+        # f.write(img)
+        # f.close()
+        cv2.imwrite(path, img)
+    except:
+        raise
+    return True
